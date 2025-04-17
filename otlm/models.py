@@ -1,19 +1,6 @@
 from scipy import sparse
-
 from .prox import *
-from tqdm.auto import trange
 
-
-def safelog(x):
-
-    if sparse.issparse(x):
-        log_x = x.copy()
-        # log_x.data = np.where(log_x.data > 0, np.log(log_x.data), 0)
-        log_x.data = np.log(log_x.data, where=log_x.data>0, out=np.zeros_like(log_x.data))
-    else:
-        log_x = np.log(x, where=x>0, out=np.zeros_like(x))
-    
-    return log_x
 
 class OTLM():
 
@@ -45,15 +32,12 @@ class OTLM():
                 K = K.multiply(yyt)
             
             K = K.tocoo()
-            # K.data = np.maximum(K.data, 1e-10)
 
         else:
             if self.reg_type == 'entropy':
                 K =  np.exp(-C/self.ε) 
             elif self.reg_type == 'kl':
                 K =  np.exp(-C/self.ε) * np.outer(y, y)
-            # K = np.maximum(K, 1e-10)
-
        
         return K
 
@@ -69,8 +53,7 @@ class OTLM():
         u1_prev = u1.copy()
         u2_prev = u2.copy()
                 
-        # init as nnls fit
-        # w = nnls(X, y)[0]
+        # init w
         w = np.ones(n_features)
 
         if self.options['disp']:
@@ -79,17 +62,7 @@ class OTLM():
 
         w_prev = w.copy()
 
-        # from matplotlib import pyplot as plt
-        # fig, ax = plt.subplots(1, 3, figsize=(20, 5))
-        # ax[1].plot(y, label='y', color='hotpink', lw=10, alpha=0.5)
-        # Q = K * np.outer(u1, u2)
-        # colors = plt.cm.Spectral_r(np.linspace(0, 1, self.max_iter))
-
         for i in range(self.max_iter):
-
-            # ax[1].plot(Q.sum(axis=0), label='Q^T 1', color=colors[i])
-            # ax[0].plot(Q.sum(axis=1), label='Q1', color=colors[i])
-            # ax[0].plot(X.dot(w), label='Xw', color=colors[i])            
 
             q1 = K.dot(u1)
             u2 = self.scaling_target(y, q1, **self.options)
@@ -108,14 +81,8 @@ class OTLM():
             
             if self.options['disp']:
                 if i%1 == 0:
-                    # print(f'OTLM iter {i:> 4d}, diff: {diff:.2e}, tol: {self.tol:.2e}, w=[{astr(w)}], diff_w: {diff_w:.2e}')
                     print(f'OTLM iter {i:> 4d}, diff: {diff:.2e}, diff_w: {diff_w:.2e}, tol: {self.tol:.2e}')
 
-        # ax[0].plot(X.dot(w), label='Xw', color='dodgerblue', lw=10, alpha=0.5)
-        # ax[0].plot(Q.sum(axis=1), label='Q1', color='blue', lw=2, alpha=1)
-        # ax[1].plot(Q.sum(axis=0), label='Q^T 1', color='red', lw=2, alpha=1)
-        # fig.colorbar(ax[2].pcolormesh(np.ma.masked_where(Q<1e-15, Q), cmap='Spectral_r'))
-        # plt.show()
 
         self.w = self.coef_ = w
         self.n_iter_ = i
@@ -124,7 +91,6 @@ class OTLM():
 
         if sparse.issparse(K):
             r, c = K.row.astype(np.int64), K.col.astype(np.int64)
-            # U = sparse.coo_array((u2[r] * u1[c] , (r, c)), shape=K.shape)
             U = sparse.coo_array((u1[r] * u2[c] , (r, c)), shape=K.shape)
             Q = K.multiply(U)
         else:
@@ -221,13 +187,15 @@ class OTLM():
         elif self.penalty == 'l2':
             s, w = proxdiv_kl_nnsx_l2(X, k, self.ε, self.α, max_iter=self.max_iter_mm, tol=self.tol, w0=w0, **options)
         
-        elif self.penalty == 'elasticnet':
-            s, w = proxdiv_kl_nnsx_elasticnet(X, k, self.ε, self.α, max_iter=self.max_iter_mm, tol=self.tol, w0=w0, **options)
-
-        elif self.penalty == 'l1d2':
-            s, w = proxdiv_kl_nnsx_l1d2(X, k, self.ε, self.α, β=self.β, D=D, max_iter=self.max_iter_mm, tol=self.tol, w0=w0, **options)
-        
-        elif self.penalty == 'fusedl1':
-            s, w = prox_kl_nnsx_fusedl1(X, k, self.ε, self.α, β=self.β, f=f, γ=γ, max_iter=self.max_iter_mm, tol=self.tol, w0=w0, **options)
-        
         return s, w
+
+
+def safelog(x):
+
+    if sparse.issparse(x):
+        log_x = x.copy()
+        log_x.data = np.log(log_x.data, where=log_x.data>0, out=np.zeros_like(log_x.data))
+    else:
+        log_x = np.log(x, where=x>0, out=np.zeros_like(x))
+    
+    return log_x
