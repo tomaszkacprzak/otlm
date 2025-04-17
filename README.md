@@ -8,6 +8,7 @@ Preprint is available at https://arxiv.org/abs/2504.04609.
 - `plots.ipynb`: Plots for the paper.
 - `tests.ipynb`: Tests for the OTLM weight update rules.
 - `otlm/`: Source code for the OTLM package.
+- `data/`: Data for experiments in the paper.
 
 ## Citation
 
