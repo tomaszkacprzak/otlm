@@ -307,9 +307,6 @@ def prox_kl_nnsx_l1_mm_jensen(X, y, ε, α, w_init=None, max_iter=100, tol=1e-6,
     return w
 
 
-import numpy as np
-import scipy.sparse as sp
-
 ##############################################################################
 #                            Helper Functions                                #
 ##############################################################################
@@ -500,10 +497,6 @@ def prox_kl_nnsx_l1_mm_jensen_sp(X, y, ε, α, w_init=None, max_iter=100, tol=1e
 #
 ##################################################################################  
 
-
-
-import numpy as np
-from scipy.special import lambertw
 
 def prox_kl_nnsx_l2_mm_jensen(X, y, ε, α, w_init=None, max_iter=20, tol=1e-7, verbose=False):
     """

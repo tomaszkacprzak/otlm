@@ -14,7 +14,7 @@ Preprint is available at https://arxiv.org/abs/2504.04609.
 If you find this package useful, please cite the paper as follows:
 
 ```bibtex
-@article{kacprzak2025scalable,
+@article{kacprzak2025otlm,
   title={Scalable Approximate Algorithms for Optimal Transport Linear Models},
   author={Kacprzak, Tomasz and Kamper, Francois and Heiss, Michael W and Janka, Gianluca and Dillner, Ann M and Takahama, Satoshi},
   journal={arXiv preprint arXiv:2504.04609},
