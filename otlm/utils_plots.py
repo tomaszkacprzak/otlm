@@ -618,7 +618,7 @@ def get_mixe_fit_comparison_data(posteriors, otlm, samp_name):
     print('mean_err', np.mean(mean_err))
     return lines
 
-def fit_mixe_single_sample(samp_name, ε, α, ρ, λ, max_dist, reg_type, datafit, penalty, size_scale=0.8, plot=True, min_element_frac=0.05, fname='./otlm_real_data_samurai_channelall_downsample100_basis4_nsamp3.pkl'):
+def fit_mixe_single_sample(samp_name, ε, α, ρ, λ, max_dist, reg_type, datafit, penalty, size_scale=0.8, plot=True, min_element_frac=0.05, fname='./data/otlm_real_data_samurai_channelall_downsample100_basis4_nsamp3.pkl'):
 
     
     
