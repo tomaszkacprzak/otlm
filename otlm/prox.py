@@ -30,7 +30,8 @@ def proxdiv_box(y, k, lb, ub, **options):
 
 def proxdiv_quadratic(y, k, λ, ε, **options):
 
-    return np.exp(λ/ε*y - lambertw(λ/ε * k * np.exp(λ/ε * y)).real )  # Shape (N,)
+    nom = ε/λ * lambertw(λ/ε * k * safeexp(λ/ε * y), k=0).real  # Shape (N,)
+    return safediv(nom, k)
 
 def proxdiv_poisson(y, k, λ, ε, **options):
 
